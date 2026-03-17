@@ -53,28 +53,40 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   try {
     const contentType = request.headers.get("content-type") || "";
 
+    let fullName = "";
+    let phone = "";
+    let email = "";
+    let comment = "";
+    let captchaToken = "";
+    console.log("CONTENT-TYPE:", request.headers.get("content-type"));
     if (
-      !contentType.includes("multipart/form-data") &&
-      !contentType.includes("application/x-www-form-urlencoded")
+      contentType.includes("multipart/form-data") ||
+      contentType.includes("application/x-www-form-urlencoded")
     ) {
+      const formData = await request.formData();
+      fullName = String(formData.get("fullName") || "").trim();
+      phone = String(formData.get("phone") || "").trim();
+      email = String(formData.get("email") || "").trim();
+      comment = String(formData.get("comment") || "").trim();
+      captchaToken = String(formData.get("h-captcha-response") || "").trim();
+    } else if (contentType.includes("application/json")) {
+      const body = await request.json();
+      fullName = String(body.fullName || "").trim();
+      phone = String(body.phone || "").trim();
+      email = String(body.email || "").trim();
+      comment = String(body.comment || "").trim();
+      captchaToken = String(body["h-captcha-response"] || body.captchaToken || "").trim();
+    } else {
       return json(
         {
           ok: false,
           message:
-            'Content-Type inválido. Usa "multipart/form-data" o "application/x-www-form-urlencoded".',
+            'Content-Type inválido. Usa multipart/form-data, application/x-www-form-urlencoded o application/json.',
         },
         400,
         origin
       );
     }
-
-    const formData = await request.formData();
-
-    const fullName = String(formData.get("fullName") || "").trim();
-    const phone = String(formData.get("phone") || "").trim();
-    const email = String(formData.get("email") || "").trim();
-    const comment = String(formData.get("comment") || "").trim();
-    const captchaToken = String(formData.get("h-captcha-response") || "").trim();
 
     if (!fullName || fullName.length < 3) {
       return json({ ok: false, message: "Nombre inválido" }, 400, origin);
@@ -97,7 +109,6 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     }
 
     const captchaOk = await verifyHCaptcha(captchaToken, clientAddress);
-
     if (!captchaOk) {
       return json(
         { ok: false, message: "Captcha inválido, intenta otra vez" },
@@ -127,11 +138,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
       html,
     });
 
-    return json(
-      { ok: true, message: "Mensaje enviado correctamente" },
-      200,
-      origin
-    );
+    return json({ ok: true, message: "Mensaje enviado correctamente" }, 200, origin);
   } catch (e: any) {
     console.error("Error /api/contact:", e?.message || e, e);
 
