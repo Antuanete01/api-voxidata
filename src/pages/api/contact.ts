@@ -111,12 +111,15 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
 
     return json({ ok: true, message: "Mensaje enviado correctamente" }, 200, origin);
   } catch (e: any) {
-    console.error("Error /api/contact:", e?.message || e, e);
+  console.error("Error /api/contact:", e?.message || e, e);
 
-    return json(
-      { ok: false, message: "No se pudo enviar el correo. Revisa logs/SMTP." },
-      500,
-      origin
-    );
-  }
+  return json(
+    {
+      ok: false,
+      message: e?.message || "Error interno en el envío"
+    },
+    500,
+    origin
+  );
+}
 };
