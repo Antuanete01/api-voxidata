@@ -1,9 +1,4 @@
 {
-  "functions": {
-    "src/pages/api/contact.ts": {
-      "maxDuration": 10
-    }
-  },
   "headers": [
     {
       "source": "/api/(.*)",
