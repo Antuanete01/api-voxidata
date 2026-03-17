@@ -11,16 +11,16 @@ const ALLOWED_ORIGINS = [
   "http://localhost:4321",
   "https://voxidata.onrender.com",
   "https://api-voxidata.vercel.app",
+  "https://api-voxidata.vercel.app/api/contact",
   "https://voxidata.com",
   "https://www.voxidata.com",
 ];
 
 function getCorsHeaders(origin: string | null) {
-  const allowedOrigin =
-    origin && ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+  const isAllowed = origin && ALLOWED_ORIGINS.includes(origin);
 
   return {
-    "Access-Control-Allow-Origin": allowedOrigin,
+    "Access-Control-Allow-Origin": isAllowed ? origin! : "null",
     "Access-Control-Allow-Methods": "POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
     "Access-Control-Max-Age": "86400",
