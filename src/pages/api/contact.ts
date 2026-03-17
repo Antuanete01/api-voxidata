@@ -51,6 +51,23 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   const origin = request.headers.get("origin");
 
   try {
+    const contentType = request.headers.get("content-type") || "";
+
+    if (
+      !contentType.includes("multipart/form-data") &&
+      !contentType.includes("application/x-www-form-urlencoded")
+    ) {
+      return json(
+        {
+          ok: false,
+          message:
+            'Content-Type inválido. Usa "multipart/form-data" o "application/x-www-form-urlencoded".',
+        },
+        400,
+        origin
+      );
+    }
+
     const formData = await request.formData();
 
     const fullName = String(formData.get("fullName") || "").trim();
@@ -80,6 +97,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     }
 
     const captchaOk = await verifyHCaptcha(captchaToken, clientAddress);
+
     if (!captchaOk) {
       return json(
         { ok: false, message: "Captcha inválido, intenta otra vez" },
@@ -109,17 +127,21 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
       html,
     });
 
-    return json({ ok: true, message: "Mensaje enviado correctamente" }, 200, origin);
+    return json(
+      { ok: true, message: "Mensaje enviado correctamente" },
+      200,
+      origin
+    );
   } catch (e: any) {
-  console.error("Error /api/contact:", e?.message || e, e);
+    console.error("Error /api/contact:", e?.message || e, e);
 
-  return json(
-    {
-      ok: false,
-      message: e?.message || "Error interno en el envío"
-    },
-    500,
-    origin
-  );
-}
+    return json(
+      {
+        ok: false,
+        message: e?.message || "Error interno en el envío",
+      },
+      500,
+      origin
+    );
+  }
 };
