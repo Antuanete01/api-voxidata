@@ -10,7 +10,7 @@ export const prerender = false;
 const ALLOWED_ORIGINS = [
   "http://localhost:4321",
   "https://voxidata.onrender.com",
-  "https://api-voxidata.vercel.app/api/contact",
+  "https://api-voxidata.vercel.app",
   "https://voxidata.com",
   "https://www.voxidata.com",
 ];
