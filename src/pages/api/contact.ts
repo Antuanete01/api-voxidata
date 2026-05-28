@@ -46,8 +46,6 @@ export const OPTIONS: APIRoute = async ({ request }) => {
 
 export const POST: APIRoute = async ({ request, clientAddress }) => {
   const origin = request.headers.get("origin");
-  console.log("ORIGIN RECIBIDO:", origin);
-  console.log("ESTÁ PERMITIDO:", ALLOWED_ORIGINS.includes(origin || ""));
   try {
     const contentType = request.headers.get("content-type") || "";
 
@@ -56,7 +54,6 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     let email = "";
     let comment = "";
     let captchaToken = "";
-    console.log("CONTENT-TYPE:", request.headers.get("content-type"));
     if (
       contentType.includes("multipart/form-data") ||
       contentType.includes("application/x-www-form-urlencoded")
@@ -106,9 +103,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
       return json({ ok: false, message: "Completa el captcha" }, 400, origin);
     }
 
-    console.log("CAPTCHA TOKEN:", captchaToken ? "presente" : "vacío");
   const captchaOk = await verifyHCaptcha(captchaToken, clientAddress);
-  console.log("CAPTCHA RESULTADO:", captchaOk);
     if (!captchaOk) {
       return json(
         { ok: false, message: "Captcha inválido, intenta otra vez" },
