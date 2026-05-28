@@ -9,9 +9,6 @@ export const prerender = false;
 
 const ALLOWED_ORIGINS = [
   "http://localhost:4321",
-  "https://voxidata.onrender.com",
-  "https://api-voxidata.vercel.app",
-  "https://api-voxidata.vercel.app/api/contact",
   "https://voxidata.com",
   "https://www.voxidata.com",
 ];
@@ -49,7 +46,8 @@ export const OPTIONS: APIRoute = async ({ request }) => {
 
 export const POST: APIRoute = async ({ request, clientAddress }) => {
   const origin = request.headers.get("origin");
-
+  console.log("ORIGIN RECIBIDO:", origin);
+  console.log("ESTÁ PERMITIDO:", ALLOWED_ORIGINS.includes(origin || ""));
   try {
     const contentType = request.headers.get("content-type") || "";
 
