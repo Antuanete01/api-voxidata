@@ -106,7 +106,9 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
       return json({ ok: false, message: "Completa el captcha" }, 400, origin);
     }
 
-    const captchaOk = await verifyHCaptcha(captchaToken, clientAddress);
+    console.log("CAPTCHA TOKEN:", captchaToken ? "presente" : "vacío");
+  const captchaOk = await verifyHCaptcha(captchaToken, clientAddress);
+  console.log("CAPTCHA RESULTADO:", captchaOk);
     if (!captchaOk) {
       return json(
         { ok: false, message: "Captcha inválido, intenta otra vez" },
